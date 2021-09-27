@@ -5,7 +5,7 @@ page {
   flex-direction: column;
 }
 .box{
-  height:150rpx;
+  height:100rpx;
   margin-bottom: 32rpx;
 }
 .shop-name{
@@ -358,4 +358,10 @@ page {
   width: 240rpx;
   height: 240rpx;
   margin: auto;
+}
+.inHistory{
+  color: #e64340;
+}
+.outHistory{
+  color: #228B22;
 }
