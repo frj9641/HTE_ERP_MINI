@@ -1,19 +1,11 @@
 const APP = getApp()
 
-// fixed首次打开不显示标题的bug
-APP.configLoadOK = () => {
-  wx.setNavigationBarTitle({
-    title: wx.getStorageSync('mallName')
-  })
-}
-
 Page({
   data: {
     showGoodsDetailPOP: false, // 是否显示商品详情
     bar: 'i'
   },
   onLoad: function (e) {
-    this.loadChemicals()
     wx.setNavigationBarTitle({
       title: 'HTE仓管系统'
     })
@@ -36,19 +28,24 @@ Page({
   },
   // 坐标匹配对应商店
   async fetchShops(latitude, longitude) {
+    var that = this
     wx.request({
       url: 'http://localhost/factory?latitude=' + latitude + '&longtitude=' + longitude,
       method: 'GET',
       success(res) {
-        console.log(res)
+        that.setData({
+          factoryId: res.data.factoryId,
+          factoryName: res.data.factoryName
+        })
+        that.loadChemicals(that.data.factoryId)
       }
     })
   },
   // 加载药剂信息
-  loadChemicals() {
+  loadChemicals(e) {
     var that = this
     wx.request({
-      url: 'http://localhost/chemical?factoryId=1',
+      url: 'http://localhost/chemical?factoryId=' + e,
       success(res) {
         res.data.forEach(ele => {
           ele.storage = ele.storage.toFixed(2) // 距离保留3位小数
@@ -62,7 +59,7 @@ Page({
   updateRep() {
     var that = this.data
     var i = this
-    if (that.bar == 'i') {
+    if (that.bar == 'i' || that.bar == 'ai') {
       if (!that.selectedProvierId) {
         wx.showToast({
           title: "请选择供应商",
@@ -104,7 +101,7 @@ Page({
                 'content-type': 'application/x-www-form-urlencoded'
               },
               data: {
-                factoryId: 1,
+                factoryId: that.factoryId,
                 providerId: that.selectedProvierId,
                 chemicalId: that.chemical.chemicalPO.chemicalId,
                 amount: that.amount,
@@ -118,7 +115,7 @@ Page({
                   title: '入库成功',
                   icon: 'success'
                 })
-                i.loadChemicals()
+                i.loadChemicals(that.factoryId)
               }
             })
           }
@@ -144,22 +141,32 @@ Page({
                 'content-type': 'application/x-www-form-urlencoded'
               },
               data: {
-                factoryId: 1,
+                factoryId: that.factoryId,
+                providerId: that.selectedProvierId,
                 chemicalId: that.chemical.chemicalPO.chemicalId,
                 amount: that.amount,
               },
               success(res) {
-                if (res.data == true) {
+                if (res.data.isStorageOk) {
                   i.hideGoodsDetailPOP()
-                  wx.showToast({
-                    title: '出库成功',
-                    icon: 'success'
-                  })
-                  i.loadChemicals()
+                  if (res.data.isProviderOk) {
+                    wx.showToast({
+                      title: '出库成功',
+                      icon: 'success'
+                    })
+                  } else {
+                    wx.showToast({
+                      title: '出库成功，使用部分其余供应商药物替代',
+                      icon: 'none',
+                      duration: 5000
+                    })
+                  }
+                  i.loadChemicals(that.factoryId)
                 } else {
                   wx.showToast({
-                    title: '出库失败',
-                    icon: 'error'
+                    title: '出库失败，总库存量不足',
+                    icon: 'none',
+                    duration: 3000
                   })
                 }
               }
@@ -173,10 +180,17 @@ Page({
   skuClick(e) {
     var selectedProvierId = e.currentTarget.dataset.idx
     var selectedProvierName = e.currentTarget.dataset.name
-    this.setData({
-      selectedProvierId: selectedProvierId,
-      selectedProvierName: selectedProvierName
-    })
+    if (this.data.selectedProvierId == selectedProvierId) {
+      this.setData({
+        selectedProvierId: "",
+        selectedProvierName: ""
+      })
+    } else {
+      this.setData({
+        selectedProvierId: selectedProvierId,
+        selectedProvierName: selectedProvierName
+      })
+    }
   },
   amountChange(e) {
     this.setData({
@@ -221,13 +235,18 @@ Page({
       bar: 'h'
     })
     wx.request({
-      url: 'http://localhost/input?factoryId=1',
+      url: 'http://localhost/input?factoryId=' + that.data.factoryId,
       method: 'GET',
       success(res) {
         that.setData({
           history: res.data
         })
       }
+    })
+  },
+  adjustBar() {
+    this.setData({
+      bar: 'a'
     })
   },
   showGoodsDetailPOP(e) {
@@ -238,6 +257,18 @@ Page({
     this.setData({
       chemical: chemical
     })
+  },
+  adjustIn(e) {
+    this.setData({
+      bar: 'ai'
+    })
+    this.showGoodsDetailPOP(e)
+  },
+  adjustOut(e) {
+    this.setData({
+      bar: 'ao'
+    })
+    this.showGoodsDetailPOP(e)
   },
   hideGoodsDetailPOP() {
     this.setData({

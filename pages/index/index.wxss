@@ -140,6 +140,10 @@ page {
   background-color: #e64340;
   color: #fff;
 }
+.content-1 .box-1 .title-1.active-g{
+  background-color: #228B22;
+  color: #fff;
+}
 .introduce{
   font-size: 28rpx;
   margin: 32rpx;
