@@ -265,6 +265,22 @@ Page({
       bar: 'a'
     })
   },
+  dataBar() {
+    var that = this
+    this.setData({
+      bar: 'd'
+    })
+    wx.request({
+      url: 'http://localhost/target?factoryId=' + that.data.factoryId,
+      method: 'GET',
+      success(res) {
+        that.setData({
+          ports: res.data.portPOList,
+          targets: res.data.targetPOList
+        })
+      }
+    })
+  },
   productBar() {
     var that = this
     this.setData({
@@ -290,6 +306,11 @@ Page({
       var product = this.data.products[e.currentTarget.dataset.idx]
       this.setData({
         product: product
+      })
+    } else if (that.bar == 'd') {
+      var port = this.data.ports[e.currentTarget.dataset.idx]
+      this.setData({
+        port: port
       })
     } else {
       var chemical = this.data.chemicals[e.currentTarget.dataset.idx]
@@ -334,9 +355,99 @@ Page({
       money: "",
       selectedPortId: "",
       selectedPortName: "",
+      product: "",
+      port: ""
     })
   },
-  submitProduct(e){
+  submitProduct(e) {
+    console.log(e.detail.value)
     var f = e.detail.value
+    var data = this.data
+    var that = this
+    if (!data.selectedPortId) {
+      wx.showToast({
+        title: "请选择采样口",
+        icon: 'none'
+      })
+      return
+    }
+    if (!f.amount) {
+      wx.showToast({
+        title: "请输入吨数",
+        icon: 'none'
+      })
+      return
+    }
+    if (data.bar == 'pi') {
+      wx.showModal({
+        title: '录入确认',
+        content: '新增产出品：' + data.product.productName + f.amount + '吨 ' +
+          '，采样口：' + data.selectedPortName,
+        success(res) {
+          if (res.confirm) {
+            wx.request({
+              url: 'http://localhost/product',
+              method: 'POST',
+              header: {
+                'content-type': 'application/x-www-form-urlencoded'
+              },
+              data: {
+                factoryId: data.factoryId,
+                portId: data.selectedPortId,
+                productId: data.product.productId,
+                amount: f.amount,
+                water: f.water,
+                cu: f.cu,
+                ni: f.ni,
+                cr: f.cr,
+                comment: f.comment
+              },
+              success() {
+                that.hideGoodsDetailPOP()
+                wx.showToast({
+                  title: '录入成功',
+                  icon: 'success'
+                })
+              }
+            })
+          }
+        }
+      })
+    } else {
+      wx.showModal({
+        title: '录入确认',
+        content: '减少产出品：' + data.product.productName + f.amount + '吨 ' +
+          '，采样口：' + data.selectedPortName,
+        success(res) {
+          if (res.confirm) {
+            wx.request({
+              url: 'http://localhost/product',
+              method: 'POST',
+              header: {
+                'content-type': 'application/x-www-form-urlencoded'
+              },
+              data: {
+                factoryId: data.factoryId,
+                portId: data.selectedPortId,
+                productId: data.product.productId,
+                amount: -f.amount,
+                water: f.water,
+                cu: f.cu,
+                ni: f.ni,
+                cr: f.cr,
+                comment: f.comment
+              },
+              success() {
+                that.hideGoodsDetailPOP()
+                wx.showToast({
+                  title: '录入成功',
+                  icon: 'success'
+                })
+              }
+            })
+          }
+        }
+      })
+    }
   }
 })

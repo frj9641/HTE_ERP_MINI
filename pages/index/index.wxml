@@ -13,10 +13,19 @@
       <van-sidebar-item title="历史记录" bindtap="historyBar" />
       <van-sidebar-item title="调整单" bindtap="adjustBar" />
       <van-sidebar-item title="产出品" bindtap="productBar" />
+      <van-sidebar-item title="质量数据" bindtap="dataBar" />
     </van-sidebar>
   </view>
 
   <scroll-view class="box-2" scroll-y="true" scroll-top="{{scrolltop}}">
+    <!-- 质量列表 -->
+    <van-card wx:if="{{bar == 'd'}}" wx:for="{{ports}}" centered="true" lazy-load="true" title="{{item.portName}}"
+      thumb="https://dcdn.it120.cc/2020/08/01/75418f1b-1d4d-48ad-a7b7-85db05f7e699.jfif" thumb-mode="aspectFill">
+      <view class="goods-btn" slot="footer">
+        <van-icon name="add" size="50rpx" data-idx="{{index}}" bind:click="showGoodsDetailPOP" />
+      </view>
+    </van-card>
+
     <!-- 药剂列表 -->
     <van-card wx:if="{{bar == 'i'||bar == 'o'}}" wx:for="{{chemicals}}" centered="true" lazy-load="true"
       num="{{item.storage}}" title="{{item.chemicalPO.chemicalName}}"
@@ -58,10 +67,34 @@
 <!-- sku -->
 <van-popup show="{{ showGoodsDetailPOP }}" custom-style="max-height: 80%;z-index:99999;" closeable close-icon="close"
   position="bottom" bind:close="hideGoodsDetailPOP">
-  <view class="title-name">{{chemical.chemicalPO.chemicalName}}</view>
+  <view class="title-name" wx:if="{{bar == 'i'||bar == 'ai'||bar=='o'||bar=='ao'}}">{{chemical.chemicalPO.chemicalName}}
+  </view>
+  <view class="title-name" wx:if="{{bar == 'pi'||bar == 'po'}}">{{product.productName}}
+  </view>
+  <view class="title-name" wx:if="{{bar == 'd'}}">{{port.portName}}
+  </view>
+
+  <!-- 质量 -->
+  <form wx:if="{{bar == 'd'}}" bindsubmit="submitData">
+    <view wx:for="{{targets}}" class="content-1">
+      <view class="title">{{item.targetName}}</view>
+      <van-cell-group>
+        <van-field name="{{item.targetName}}" type="number" label="{{item.targetName}}"
+          placeholder="{{item.targetName}}" />
+      </van-cell-group>
+    </view>
+    <view class="add-bar">
+      <view class="add-cart">
+        <van-button block color="#e64340" form-type="submit">
+          提交
+        </van-button>
+      </view>
+    </view>
+  </form>
+
   <!-- 入库供应商 -->
   <view class="content-1" wx:if="{{bar == 'i'||bar == 'ai'}}">
-    <view class="title">入库供应商</view>
+    <view class="title">入库供应商*</view>
     <view class="box-1">
       <view wx:for="{{chemical.providerPOList}}" class="title-1 {{selectedProvierId==item.providerId?'active':''}}"
         data-idx="{{item.providerId}}" data-name="{{item.providerName}}" bindtap="skuClick">{{item.providerName}}</view>
@@ -69,7 +102,7 @@
   </view>
   <!-- 出库供应商 -->
   <view class="content-1" wx:if="{{bar == 'o'||bar == 'ao'}}">
-    <view class="title">出库供应商</view>
+    <view class="title">出库供应商*</view>
     <view class="box-1">
       <view wx:for="{{chemical.providerPOList}}" class="title-1 {{selectedProvierId==item.providerId?'active-g':''}}"
         data-idx="{{item.providerId}}" data-name="{{item.providerName}}" bindtap="skuClick">{{item.providerName}}</view>
@@ -78,7 +111,7 @@
 
   <!-- 采样口 -->
   <view class="content-1" wx:if="{{bar == 'pi'}}">
-    <view class="title">采样口</view>
+    <view class="title">采样口*</view>
     <view class="box-1">
       <view wx:for="{{ports}}" class="title-1 {{selectedPortId==item.portId?'active':''}}" data-idx="{{item.portId}}"
         data-name="{{item.portName}}" bindtap="skuClick1">{{item.portName}}</view>
@@ -92,17 +125,15 @@
     </view>
   </view>
 
-  <!-- 产出品数量 -->
-  <view class="content-1" wx:if="{{bar == 'pi'||bar == 'po'}}">
-    <view class="title">数量</view>
-    <van-cell-group>
-      <van-field value="{{amount}}" placeholder="吨" type="number" label="吨数" bind:change="amountChange" />
-    </van-cell-group>
-  </view>
-
   <!-- 产出品表单 -->
   <form wx:if="{{bar == 'pi'||bar == 'po'}}" bindsubmit="submitProduct">
-    <!-- 水 -->
+    <view class="content-1" wx:if="{{bar == 'pi'||bar == 'po'}}">
+      <view class="title">数量*</view>
+      <van-cell-group>
+        <van-field name="amount" placeholder="吨" type="number" label="吨数" />
+      </van-cell-group>
+    </view>
+
     <view class="content-1">
       <view class="title">含水率</view>
       <van-cell-group>
@@ -134,24 +165,22 @@
     <view class="content-1">
       <view class="title">备注</view>
       <van-cell-group>
-        <van-field name="comment" label="备注" placeholder="输入备注"/>
+        <van-field name="comment" label="备注" placeholder="输入备注" />
       </van-cell-group>
     </view>
 
     <view class="add-bar">
       <view class="add-cart">
         <van-button block color="{{bar == 'pi'? '#e64340' : '#228B22'}}" form-type="submit">
-          产出品录入
+          确定
         </van-button>
       </view>
     </view>
   </form>
 
-
-
   <!-- 数量 -->
   <view class="content-1" wx:if="{{bar == 'i'||bar == 'ai'||bar == 'o'||bar == 'ao'}}">
-    <view class="title">数量</view>
+    <view class="title">数量*</view>
     <van-cell-group>
       <van-field value="{{amount}}" placeholder="吨" type="number" label="{{bar=='i'||bar=='ai'?'入库吨数':'出库吨数'}}"
         bind:change="amountChange" />
@@ -159,14 +188,14 @@
   </view>
   <!-- 单价 -->
   <view class="content-1" wx:if="{{bar == 'i'||bar=='ai'}}">
-    <view class="title">单价</view>
+    <view class="title">单价*</view>
     <van-cell-group>
       <van-field value="{{price}}" placeholder="吨/元" type="number" label="货品单价" bind:change="priceChange" />
     </van-cell-group>
   </view>
   <!-- 运费 -->
   <view class="content-1" wx:if="{{bar == 'i'||bar=='ai'}}">
-    <view class="title">运费</view>
+    <view class="title">运费*</view>
     <van-cell-group>
       <van-field value="{{carriage}}" placeholder="吨/元" type="number" label="货品运费" bind:change="carriageChange" />
     </van-cell-group>
