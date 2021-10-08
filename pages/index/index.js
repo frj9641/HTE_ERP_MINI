@@ -3,7 +3,8 @@ const APP = getApp()
 Page({
   data: {
     showGoodsDetailPOP: false, // 是否显示商品详情
-    bar: 'i'
+    bar: 'i',
+    showProductDetailPOP: false
   },
   onLoad: function (e) {
     wx.setNavigationBarTitle({
@@ -192,6 +193,21 @@ Page({
       })
     }
   },
+  skuClick1(e) {
+    var selectedPortId = e.currentTarget.dataset.idx
+    var selectedPortName = e.currentTarget.dataset.name
+    if (this.data.selectedPortId == selectedPortId) {
+      this.setData({
+        selectedPortId: "",
+        selectedPortName: ""
+      })
+    } else {
+      this.setData({
+        selectedPortId: selectedPortId,
+        selectedPortName: selectedPortName
+      })
+    }
+  },
   amountChange(e) {
     this.setData({
       amount: e.detail,
@@ -249,14 +265,38 @@ Page({
       bar: 'a'
     })
   },
+  productBar() {
+    var that = this
+    this.setData({
+      bar: 'p'
+    })
+    wx.request({
+      url: 'http://localhost/product?factoryId=' + that.data.factoryId,
+      method: 'GET',
+      success(res) {
+        that.setData({
+          ports: res.data.portPOList,
+          products: res.data.productPOList
+        })
+      }
+    })
+  },
   showGoodsDetailPOP(e) {
+    var that = this.data
     this.setData({
       showGoodsDetailPOP: true
     })
-    var chemical = this.data.chemicals[e.currentTarget.dataset.idx]
-    this.setData({
-      chemical: chemical
-    })
+    if (that.bar == 'pi' || that.bar == 'po') {
+      var product = this.data.products[e.currentTarget.dataset.idx]
+      this.setData({
+        product: product
+      })
+    } else {
+      var chemical = this.data.chemicals[e.currentTarget.dataset.idx]
+      this.setData({
+        chemical: chemical
+      })
+    }
   },
   adjustIn(e) {
     this.setData({
@@ -270,6 +310,18 @@ Page({
     })
     this.showGoodsDetailPOP(e)
   },
+  productIn(e) {
+    this.setData({
+      bar: 'pi'
+    })
+    this.showGoodsDetailPOP(e)
+  },
+  productOut(e) {
+    this.setData({
+      bar: 'po'
+    })
+    this.showGoodsDetailPOP(e)
+  },
   hideGoodsDetailPOP() {
     this.setData({
       showGoodsDetailPOP: false,
@@ -279,7 +331,12 @@ Page({
       selectedProvierId: "",
       chemical: "",
       selectedProvierName: "",
-      money: ""
+      money: "",
+      selectedPortId: "",
+      selectedPortName: "",
     })
   },
+  submitProduct(e){
+    var f = e.detail.value
+  }
 })
