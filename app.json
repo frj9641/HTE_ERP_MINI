@@ -41,13 +41,13 @@
         "pagePath": "pages/index/index",
         "iconPath": "images/nav/index-off.png",
         "selectedIconPath": "images/nav/index-on.png",
-        "text": "点餐"
+        "text": "业务"
       },
       {
         "pagePath": "pages/queue/index",
         "iconPath": "images/nav/qh-off.png",
         "selectedIconPath": "images/nav/qh-on.png",
-        "text": "取号"
+        "text": "报表"
       }
     ]
   },

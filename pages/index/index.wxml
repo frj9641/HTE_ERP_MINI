@@ -19,7 +19,7 @@
 
   <scroll-view class="box-2" scroll-y="true" scroll-top="{{scrolltop}}">
     <!-- 质量列表 -->
-    <van-card wx:if="{{bar == 'd'}}" wx:for="{{ports}}" centered="true" lazy-load="true" title="{{item.portName}}"
+    <van-card wx:if="{{bar == 'd'}}" wx:for="{{ports}}" centered="true" lazy-load="true" title="{{item.portName}}" tag="{{item.portName}}"
       thumb="/images/pic.webp" thumb-mode="aspectFill">
       <view class="goods-btn" slot="footer">
         <van-icon name="add" size="50rpx" data-idx="{{index}}" bind:click="showGoodsDetailPOP" />
@@ -29,7 +29,7 @@
     <!-- 药剂列表 -->
     <van-card wx:if="{{bar == 'i'||bar == 'o'}}" wx:for="{{chemicals}}" centered="true" lazy-load="true"
       num="{{item.storage}}" title="{{item.chemicalPO.chemicalName}}"
-      thumb="/images/pic.webp" thumb-mode="aspectFill">
+      thumb="/images/pic.webp" tag="{{item.chemicalPO.chemicalName}}" thumb-mode="aspectFill">
       <view class="goods-btn" slot="footer">
         <van-icon name="{{bar == 'i' ? 'add' : 'clear'}}" color="{{bar == 'i' ? '#e64340' : '#228B22'}}" size="50rpx"
           data-idx="{{index}}" bind:click="showGoodsDetailPOP" />
@@ -38,7 +38,7 @@
     <!-- 调整单列表 -->
     <van-card wx:if="{{bar == 'a'||bar == 'ai'||bar == 'ao'}}" wx:for="{{chemicals}}" centered="true" lazy-load="true"
       num="{{item.storage}}" title="{{item.chemicalPO.chemicalName}}"
-      thumb="/images/pic.webp" thumb-mode="aspectFill">
+      thumb="/images/pic.webp" tag="{{item.chemicalPO.chemicalName}}" thumb-mode="aspectFill">
       <view class="goods-btn" slot="footer">
         <van-icon name="add-o" color="#e64340" size="50rpx" data-idx="{{index}}" bind:click="adjustIn" />
         <van-icon name="close" color="#228B22" size="50rpx" data-idx="{{index}}" bind:click="adjustOut" />
@@ -54,7 +54,7 @@
 
     <!-- 产出品 -->
     <van-card wx:if="{{bar == 'p'||bar=='pi'||bar=='po'}}" wx:for="{{products}}" centered="true" lazy-load="true"
-      title="{{item.productName}}" thumb="/images/pic.webp"
+      title="{{item.productName}}" tag="{{item.productName}}" thumb="/images/pic.webp"
       thumb-mode="aspectFill">
       <view class="goods-btn" slot="footer">
         <van-icon name="add-o" color="#e64340" size="50rpx" data-idx="{{index}}" bind:click="productIn" />
