@@ -41,7 +41,7 @@
   "compileType": "miniprogram",
   "libVersion": "2.19.2",
   "appid": "wx5a966c03379733a7",
-  "projectname": "%E5%B0%8F%E8%9C%9C%E8%9C%82%E7%82%B9%E9%A4%90",
+  "projectname": "HTE智慧运营",
   "debugOptions": {
     "hidedInDevtools": []
   },
