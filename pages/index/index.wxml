@@ -85,7 +85,7 @@
     </view>
     <view class="add-bar">
       <view class="add-cart">
-        <van-button block color="#e64340" form-type="submit">
+        <van-button block color="#ffa500" form-type="submit">
           提交
         </van-button>
       </view>
