@@ -80,7 +80,7 @@
       <view class="title">{{item.targetName}}</view>
       <van-cell-group>
         <van-field name="{{item.targetName}}" type="number" label="{{item.targetName}}"
-          placeholder="{{item.targetName}}" />
+          placeholder="{{item.targetName}}" value="{{clear}}" />
       </van-cell-group>
     </view>
     <view class="add-bar">
@@ -118,7 +118,7 @@
     </view>
   </view>
   <view class="content-1" wx:if="{{bar == 'po'}}">
-    <view class="title">采样口</view>
+    <view class="title">采样口*</view>
     <view class="box-1">
       <view wx:for="{{ports}}" class="title-1 {{selectedPortId==item.portId?'active-g':''}}" data-idx="{{item.portId}}"
         data-name="{{item.portName}}" bindtap="skuClick1">{{item.portName}}</view>
@@ -130,42 +130,42 @@
     <view class="content-1" wx:if="{{bar == 'pi'||bar == 'po'}}">
       <view class="title">数量*</view>
       <van-cell-group>
-        <van-field name="amount" placeholder="吨" type="number" label="吨数" />
+        <van-field name="amount" placeholder="吨" type="number" label="吨数" value="{{clear}}" />
       </van-cell-group>
     </view>
 
     <view class="content-1">
       <view class="title">含水率</view>
       <van-cell-group>
-        <van-field name="water" placeholder="%" type="number" label="%" />
+        <van-field name="water" placeholder="%" type="number" label="%" value="{{clear}}" />
       </van-cell-group>
     </view>
 
     <view class="content-1">
       <view class="title">铜干基</view>
       <van-cell-group>
-        <van-field name="cu" placeholder="%" type="number" label="%" />
+        <van-field name="cu" placeholder="%" type="number" label="%" value="{{clear}}" />
       </van-cell-group>
     </view>
 
     <view class="content-1">
       <view class="title">镍干基</view>
       <van-cell-group>
-        <van-field name="ni" placeholder="%" type="number" label="%" />
+        <van-field name="ni" placeholder="%" type="number" label="%" value="{{clear}}" />
       </van-cell-group>
     </view>
 
     <view class="content-1">
       <view class="title">铬干基</view>
       <van-cell-group>
-        <van-field name="cr" placeholder="%" type="number" label="%" />
+        <van-field name="cr" placeholder="%" type="number" label="%" value="{{clear}}" />
       </van-cell-group>
     </view>
 
     <view class="content-1">
       <view class="title">备注</view>
       <van-cell-group>
-        <van-field name="comment" label="备注" placeholder="输入备注" />
+        <van-field name="comment" label="备注" placeholder="输入备注" value="{{clear}}" />
       </van-cell-group>
     </view>
 

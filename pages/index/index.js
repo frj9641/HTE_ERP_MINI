@@ -356,11 +356,11 @@ Page({
       selectedPortId: "",
       selectedPortName: "",
       product: "",
-      port: ""
+      port: "",
+      clear: ""
     })
   },
   submitProduct(e) {
-    console.log(e.detail.value)
     var f = e.detail.value
     var data = this.data
     var that = this
@@ -449,5 +449,55 @@ Page({
         }
       })
     }
+  },
+  submitData(e) {
+    var f = e.detail.value
+    var data = this.data
+    var that = this
+    var flag = false
+    Object.keys(f).forEach(ele => {
+      if (f[ele] != "") flag = true
+    })
+    if (!flag) {
+      wx.showToast({
+        title: '至少输入一个指标值',
+        icon: 'none'
+      })
+      return
+    }
+    Object.keys(f).map(ele => (!f[ele] ? delete f[ele] : ''))
+    var result = ""
+    Object.keys(f).forEach(ele => {
+      result+=ele+":"+f[ele]+";"
+    })
+    console.log(result)
+    wx.showModal({
+      title: '录入确认',
+      content: '录入指标:' + Object.keys(f),
+      success(res) {
+        if (res.confirm) {
+          wx.request({
+            url: 'http://localhost/target',
+            method: 'POST',
+            header: {
+              'content-type': 'application/x-www-form-urlencoded'
+            },
+            data: {
+              factoryId: data.factoryId,
+              portId: data.port.portId,
+              result: result
+            },
+            success() {
+              that.hideGoodsDetailPOP()
+              wx.showToast({
+                title: '录入成功',
+                icon: 'success'
+              })
+            }
+          })
+        }
+      }
+    })
+
   }
 })
